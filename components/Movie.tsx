@@ -1,5 +1,6 @@
 // Movie card component using styled components
 import { IMAGE_BASE_URL, IMAGE_POSTER_SIZE } from "config";
+import Link from "next/link";
 import styled from "styled-components";
 
 export const MovieCardImage = styled.img`
@@ -21,12 +22,6 @@ export const MovieCardGenres = styled.p`
   color: #999;
 `;
 
-export const MovieCardOverview = styled.p`
-  font-size: 14px;
-  text-align: center;
-  margin: 5px 0;
-`;
-
 export const MovieCardWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -46,14 +41,15 @@ export const MovieCardWrapper = styled.div`
 
 export function Movie({ movie }: { movie: any }) {
   return (
-    <MovieCardWrapper>
-      <MovieCardImage
-        src={`${IMAGE_BASE_URL}${IMAGE_POSTER_SIZE}/${movie.poster_path}`}
-        alt=""
-      />
-      <MovieCardTitle>{movie.title}</MovieCardTitle>
-      <MovieCardGenres>{movie.genres.join(" / ")}</MovieCardGenres>
-      <MovieCardOverview>{movie.overview}</MovieCardOverview>
-    </MovieCardWrapper>
+    <Link href={`/movies/${movie.id}`}>
+      <MovieCardWrapper>
+        <MovieCardImage
+          src={`${IMAGE_BASE_URL}/${IMAGE_POSTER_SIZE}/${movie.poster_path}`}
+          alt=""
+        />
+        <MovieCardTitle>{movie.title}</MovieCardTitle>
+        <MovieCardGenres>{movie.genres.join(" / ")}</MovieCardGenres>
+      </MovieCardWrapper>
+    </Link>
   );
 }

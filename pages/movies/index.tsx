@@ -1,4 +1,3 @@
-import React from "react";
 import Layout from "components/Layout";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "lib/session";
@@ -6,9 +5,10 @@ import { User } from "pages/api/user";
 
 import { InferGetServerSidePropsType } from "next";
 
-import * as config from "../config";
+import * as config from "../../config";
 import { Movie } from "components/Movie";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
 
 const MoviesWrapper = styled.ul`
   display: flex;
@@ -21,9 +21,9 @@ const MoviesWrapper = styled.ul`
 export default function Movies({
   user,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [movies, setMovies] = React.useState<any[]>([]);
+  const [movies, setMovies] = useState<any[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let moviesUrl = `${config.BASE_API_URL}/movie/popular${config.API_KEY}&page=1`;
 
     let genresListUrl = `${config.BASE_API_URL}/genre/movie/list${config.API_KEY}&language=en-US`;
@@ -51,7 +51,7 @@ export default function Movies({
 
             setTimeout(() => {
               console.log("a", movies);
-            }, 2000);
+            }, 1000);
           });
       });
   }, []);
