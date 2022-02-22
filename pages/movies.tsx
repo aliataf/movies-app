@@ -1,63 +1,96 @@
-import React from 'react'
-import Layout from 'components/Layout'
-import { withIronSessionSsr } from 'iron-session/next'
-import { sessionOptions } from 'lib/session'
-import { User } from 'pages/api/user'
+import React from "react";
+import Layout from "components/Layout";
+import { withIronSessionSsr } from "iron-session/next";
+import { sessionOptions } from "lib/session";
+import { User } from "pages/api/user";
 
-import { InferGetServerSidePropsType } from 'next'
+import { InferGetServerSidePropsType } from "next";
 
-export default function SsrProfile({
+import * as config from "../config";
+import { Movie } from "components/Movie";
+import styled from "styled-components";
+
+const MoviesWrapper = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+`;
+
+export default function Movies({
   user,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [movies, setMovies] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    let moviesUrl = `${config.BASE_API_URL}/movie/popular${config.API_KEY}&page=1`;
+
+    let genresListUrl = `${config.BASE_API_URL}/genre/movie/list${config.API_KEY}&language=en-US`;
+
+    fetch(moviesUrl)
+      .then((response1) => response1.json())
+      .then((response1) => {
+        // fetch the list of genres and update the state
+        fetch(genresListUrl)
+          .then((response2) => response2.json())
+          .then((response2) => {
+            setMovies(
+              response1.results.map((movie: any) => {
+                const genres = response2.genres
+                  .filter((genre: any) =>
+                    movie.genre_ids.find((id: any) => id === genre.id)
+                  )
+                  .map((genre: any) => genre.name);
+                return {
+                  ...movie,
+                  genres: genres ? genres : [],
+                };
+              })
+            );
+
+            setTimeout(() => {
+              console.log("a", movies);
+            }, 2000);
+          });
+      });
+  }, []);
+
   return (
     <Layout>
-      <h1>Your GitHub profile</h1>
-      <h2>
-        This page uses{' '}
-        <a href="https://nextjs.org/docs/basic-features/pages#server-side-rendering">
-          Server-side Rendering (SSR)
-        </a>{' '}
-        and{' '}
-        <a href="https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props">
-          getServerSideProps
-        </a>
-      </h2>
-
       {user?.isLoggedIn && (
         <>
-          <p style={{ fontStyle: 'italic' }}>
-            Public data, from{' '}
-            <a href={`https://github.com/${user.login}`}>
-              https://github.com/{user.login}
-            </a>
-            , reduced to `login` and `avatar_url`.
-          </p>
-          <pre>{JSON.stringify(user, null, 2)}</pre>
+          <h1>Movies</h1>
+          <MoviesWrapper>
+            {movies.map((movie: any) => (
+              <Movie key={movie.id} movie={movie} />
+            ))}
+          </MoviesWrapper>
         </>
       )}
     </Layout>
-  )
+  );
 }
 
 export const getServerSideProps = withIronSessionSsr(async function ({
   req,
   res,
 }) {
-  const user = req.session.user
+  const user = req.session.user;
 
   if (user === undefined) {
-    res.setHeader('location', '/login')
-    res.statusCode = 302
-    res.end()
+    res.setHeader("location", "/login");
+    res.statusCode = 302;
+    res.end();
     return {
       props: {
-        user: { isLoggedIn: false, login: '', avatarUrl: '' } as User,
+        user: { isLoggedIn: false, login: "", avatarUrl: "" } as User,
       },
-    }
+    };
   }
 
   return {
     props: { user: req.session.user },
-  }
+  };
 },
-sessionOptions)
+sessionOptions);
