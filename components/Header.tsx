@@ -3,85 +3,93 @@ import useUser from "lib/useUser";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import fetchJson from "lib/fetchJson";
+import styled from "styled-components";
+
+const UnorderedList = styled.ul`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  margin-left: 0;
+  padding: 0 20px;
+`;
+
+const StyledHeader = styled.header`
+  padding: 0.2rem;
+  color: #fff;
+  background-color: #333;
+`;
+
+const StyledA = styled.a`
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  & img {
+    margin-right: 1em;
+  }
+`;
+
+const StyledDiv = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+`;
 
 export default function Header() {
   const { user, mutateUser } = useUser();
   const router = useRouter();
 
   return (
-    <header>
+    <StyledHeader>
       <nav>
-        <ul>
+        <UnorderedList>
           <li>
-            <a href="https://github.com/aliataf/movies-app">
+            <StyledA href="https://github.com/aliataf/movies-app">
               <Image
                 src="/GitHub-Mark-Light-32px.png"
                 width="32"
                 height="32"
                 alt=""
               />
-            </a>
+            </StyledA>
           </li>
-          {user?.isLoggedIn === false && (
+          <StyledDiv>
             <li>
-              <Link href="/login">
-                <a>Login</a>
+              <Link href="/">
+                <StyledA>Home</StyledA>
               </Link>
             </li>
-          )}
-          {user?.isLoggedIn === true && (
-            <li>
-              <a
-                href="/api/logout"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  mutateUser(
-                    await fetchJson("/api/logout", { method: "POST" }),
-                    false
-                  );
-                  router.push("/login");
-                }}
-              >
-                Logout
-              </a>
-            </li>
-          )}
-        </ul>
+            {user?.isLoggedIn === false && (
+              <li>
+                <Link href="/login">
+                  <StyledA>Login</StyledA>
+                </Link>
+              </li>
+            )}
+            {user?.isLoggedIn === true && (
+              <li>
+                <StyledA
+                  href="/api/logout"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    mutateUser(
+                      await fetchJson("/api/logout", { method: "POST" }),
+                      false
+                    );
+                    router.push("/login");
+                  }}
+                >
+                  Logout
+                </StyledA>
+              </li>
+            )}
+          </StyledDiv>
+        </UnorderedList>
       </nav>
-      <style jsx>{`
-        ul {
-          display: flex;
-          list-style: none;
-          margin-left: 0;
-          padding-left: 0;
-        }
-
-        li {
-          margin-right: 1rem;
-          display: flex;
-        }
-
-        li:first-child {
-          margin-left: auto;
-        }
-
-        a {
-          color: #fff;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-        }
-
-        a img {
-          margin-right: 1em;
-        }
-
-        header {
-          padding: 0.2rem;
-          color: #fff;
-          background-color: #333;
-        }
-      `}</style>
-    </header>
+    </StyledHeader>
   );
 }
