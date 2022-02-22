@@ -1,21 +1,26 @@
-import Link from 'next/link'
-import useUser from 'lib/useUser'
-import { useRouter } from 'next/router'
-import Image from 'next/image'
-import fetchJson from 'lib/fetchJson'
+import Link from "next/link";
+import useUser from "lib/useUser";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import fetchJson from "lib/fetchJson";
 
 export default function Header() {
-  const { user, mutateUser } = useUser()
-  const router = useRouter()
+  const { user, mutateUser } = useUser();
+  const router = useRouter();
 
   return (
     <header>
       <nav>
         <ul>
           <li>
-            <Link href="/">
-              <a>Home</a>
-            </Link>
+            <a href="https://github.com/aliataf/movies-app">
+              <Image
+                src="/GitHub-Mark-Light-32px.png"
+                width="32"
+                height="32"
+                alt=""
+              />
+            </a>
           </li>
           {user?.isLoggedIn === false && (
             <li>
@@ -25,61 +30,22 @@ export default function Header() {
             </li>
           )}
           {user?.isLoggedIn === true && (
-            <>
-              <li>
-                <Link href="/profile-sg">
-                  <a>
-                    <span
-                      style={{
-                        marginRight: '.3em',
-                        verticalAlign: 'middle',
-                        borderRadius: '100%',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <Image
-                        src={user.avatarUrl}
-                        width={32}
-                        height={32}
-                        alt=""
-                      />
-                    </span>
-                    Profile (Static Generation, recommended)
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/profile-ssr">
-                  <a>Profile (Server-side Rendering)</a>
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="/api/logout"
-                  onClick={async (e) => {
-                    e.preventDefault()
-                    mutateUser(
-                      await fetchJson('/api/logout', { method: 'POST' }),
-                      false
-                    )
-                    router.push('/login')
-                  }}
-                >
-                  Logout
-                </a>
-              </li>
-            </>
+            <li>
+              <a
+                href="/api/logout"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  mutateUser(
+                    await fetchJson("/api/logout", { method: "POST" }),
+                    false
+                  );
+                  router.push("/login");
+                }}
+              >
+                Logout
+              </a>
+            </li>
           )}
-          <li>
-            <a href="https://github.com/vvo/iron-session">
-              <Image
-                src="/GitHub-Mark-Light-32px.png"
-                width="32"
-                height="32"
-                alt=""
-              />
-            </a>
-          </li>
         </ul>
       </nav>
       <style jsx>{`
@@ -117,5 +83,5 @@ export default function Header() {
         }
       `}</style>
     </header>
-  )
+  );
 }
