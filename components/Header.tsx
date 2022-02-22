@@ -71,21 +71,40 @@ export default function Header() {
               </li>
             )}
             {user?.isLoggedIn === true && (
-              <li>
-                <StyledA
-                  href="/api/logout"
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    mutateUser(
-                      await fetchJson("/api/logout", { method: "POST" }),
-                      false
-                    );
-                    router.push("/login");
-                  }}
-                >
-                  Logout
-                </StyledA>
-              </li>
+              <>
+                <li>
+                  <Link href="/profile-sg">
+                    <StyledA
+                      href="/api/logout"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        mutateUser(
+                          await fetchJson("/api/logout", { method: "POST" }),
+                          false
+                        );
+                        router.push("/login");
+                      }}
+                    >
+                      <span
+                        style={{
+                          marginRight: ".3em",
+                          verticalAlign: "middle",
+                          borderRadius: "100%",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <Image
+                          src={user.avatarUrl}
+                          width={32}
+                          height={32}
+                          alt=""
+                        />
+                      </span>
+                      Logout
+                    </StyledA>
+                  </Link>
+                </li>
+              </>
             )}
           </StyledDiv>
         </UnorderedList>
