@@ -17,3 +17,5 @@ Run the following command to start the server:
 ```bash
 npm run dev
 ```
+
+[Demo](https://movies-app-123.herokuapp.com/)
